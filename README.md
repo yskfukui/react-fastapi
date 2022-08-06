@@ -1,4 +1,8 @@
+### imageのビルド
+```
+docker build -t イメージ名 . 
+```
 ### コンテナの起動
 ```
-docker built -t イメージ名 . 
+docker run -it イメージ名 /bin/sh
 ```
