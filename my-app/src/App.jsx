@@ -1,32 +1,24 @@
 import React from "react";
-import axios from "axios";
-import { Header } from './Header';
-import { Footer } from './Footer';
+import { Home } from './Home';
 import './App.css';
-
+import { Page1 } from './pages/page1'
+import { Page2 } from './pages/page2'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from 'react-router-dom'
 function App() {
-  const [data, setData] = React.useState();
-  const url = "http://127.0.0.1:8000/users/";
-
-  const GetData = () => {
-    axios.get(url).then((res) => {
-      setData(res.data);
-    })
-      .catch((error) => {
-        console.log(error);
-      })
-
-  };
+  
   return (
     <div className="App">
-      <Header></Header>
-      
-      <div>ここ</div>
-      {!data && <button onClick={GetData}>データを取得</button>}
-      {data && <div>{data[0].id}</div>}
-      {data && <div>{data[0].email}</div>}
-
-      <Footer></Footer>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/page1' element={<Page1 />} />
+          <Route path='/page2' element={<Page2 />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
