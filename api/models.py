@@ -1,6 +1,7 @@
 from .database import Base
 from sqlalchemy import Boolean, Integer, String,ForeignKey,Column
 from sqlalchemy.orm import relationship
+import passlib.hash as hash
 
 class User(Base):
     __tablename__ = 'users'
@@ -11,6 +12,9 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     username = Column(String)
     items=relationship("Item",back_populates="owner")
+
+    def verify_password(self,password:str):
+        return hash.bcrypt.verify(password,self.password)
 
 class Item(Base):
     __tablename__="items"

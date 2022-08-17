@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends,HTTPException
+from fastapi import FastAPI,Depends,HTTPException,security
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import crud,models,schemas
@@ -59,3 +59,15 @@ def create_item_for_user(
 def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = crud.get_items(db, skip=skip, limit=limit)
     return items
+
+# https://github.com/sixfwa/react-fastapi/blob/main/backend/main.py
+@app.post("/api/token")
+def generate_token(
+    form_data:security.OAuth2PasswordRequestForm=Depends(),
+    db:Session=Depends(get_db),
+):
+    user=crud.authenticate_user(form_data.username,form_data.password,db)
+    if not user:
+        raise HTTPException(status_code=401,detail="Invalid Credentials")
+
+    return crud.create_token(user)

@@ -1,6 +1,8 @@
 from typing import List,Union
 from pydantic import BaseModel
 
+#https://note.com/engneer_hino/n/n4abca76027b8
+
 class ItemBase(BaseModel):
     title:str
     description:Union[str,None]=None

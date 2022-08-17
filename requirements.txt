@@ -2,3 +2,7 @@ uvicorn
 fastapi 
 requests
 sqlalchemy
+PyJWT
+passlib
+python-multipart
+bcrypt
