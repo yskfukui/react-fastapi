@@ -1,11 +1,14 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import axios from "axios";
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ProfileList } from './utils/ProfileList';
+import { useContext } from 'react';
+import { UserContext } from './utils/UserContext';
+import { Register } from './utils/Register';
 export const Home = () => {
     const [data, setData] = React.useState();
+    const [token,]=useContext(UserContext)
     const url = "http://127.0.0.1:8000/users/";
 
     const GetData = () => {
@@ -20,14 +23,21 @@ export const Home = () => {
 
     return (
         <div>
-            <Header></Header>
-            <h1>ホーム</h1>
-            <ul>
-                <li><Link to="/">ホーム</Link></li>
-                <li><Link to="/page1">ページ1</Link></li>
-                <li><Link to="/page2">ページ2</Link></li>
-            </ul>
-            <div>ここ</div>
+            <Header title="title"></Header>
+            <div className='columns'>
+                <div className='column'>a</div>
+                <div className='column m-6'>
+                    {
+                        !token ?(
+                            <div className='columns'>
+                                <Register/><p>login</p>
+                            </div>
+                        ):
+                        <p>table</p>
+                    }
+                </div>
+                <div className='column'>c</div>
+            </div>
             {!data && <button onClick={GetData}>データを取得</button>}
             {data && <ProfileList data={data}></ProfileList>}
             {/* {data && <div>{data[0].email}</div>} */}

@@ -8,8 +8,9 @@ import {
   Routes,
   Route,
 } from 'react-router-dom'
-function App() {
-  
+
+const App=()=> {
+
   return (
     <div className="App">
       <BrowserRouter>
