@@ -6,6 +6,8 @@ import { ProfileList } from './utils/ProfileList';
 import { useContext } from 'react';
 import { UserContext } from './utils/UserContext';
 import { Register } from './utils/Register';
+import {Login} from './utils/Login'
+import {Table} from './utils/Table'
 export const Home = () => {
     const [data, setData] = React.useState();
     const [token,]=useContext(UserContext)
@@ -25,18 +27,16 @@ export const Home = () => {
         <div>
             <Header title="title"></Header>
             <div className='columns'>
-                <div className='column'>a</div>
                 <div className='column m-6'>
                     {
                         !token ?(
                             <div className='columns'>
-                                <Register/><p>login</p>
+                                <Register/><Login/>
                             </div>
                         ):
-                        <p>table</p>
+                        <p><Table /></p>
                     }
                 </div>
-                <div className='column'>c</div>
             </div>
             {!data && <button onClick={GetData}>データを取得</button>}
             {data && <ProfileList data={data}></ProfileList>}

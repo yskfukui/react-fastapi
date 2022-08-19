@@ -1,7 +1,9 @@
+from msilib import schema
 from fastapi import FastAPI,Depends,HTTPException,security
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from . import crud,models,schemas
+from .crud import get_db
 from .database import SessionLocal,engine
 from typing import List
 
@@ -18,20 +20,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
-@app.post("/users/", response_model=schemas.User)
+
+@app.post("/users/")
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    user=crud.create_user(db=db, user=user)
+    return crud.create_token(user)
 
 
 @app.get("/users/", response_model=List[schemas.User])
@@ -56,9 +54,13 @@ def create_item_for_user(
 
 
 @app.get("/items/", response_model=List[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items
+def read_items(
+    user:schemas.User=Depends(crud.get_current_user),
+    db:Session=Depends(get_db)
+):
+    return crud.get_items(user=user,db=db)
+
+
 
 # https://github.com/sixfwa/react-fastapi/blob/main/backend/main.py
 @app.post("/api/token")
@@ -71,3 +73,7 @@ def generate_token(
         raise HTTPException(status_code=401,detail="Invalid Credentials")
 
     return crud.create_token(user)
+
+@app.get("/api/users/me",response_model=schemas.User)
+def get_user(user:schemas.User=Depends(crud.get_current_user)):
+    return user

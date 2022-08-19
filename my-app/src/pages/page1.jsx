@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Example from '../utils/walkman'
+import { Paperplane} from '../utils/paperplane'
 import { Register } from '../utils/Register'
 import { UserContext, UserProvider } from '../utils/UserContext'
 export const Page1 = () => {
@@ -13,6 +15,8 @@ export const Page1 = () => {
             </ul>
             <UserProvider></UserProvider>
             <Register></Register>
+            <Example></Example>
+            <Paperplane></Paperplane>
         </div>
     )
 }

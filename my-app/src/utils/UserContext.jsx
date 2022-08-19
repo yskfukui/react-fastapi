@@ -4,6 +4,10 @@ export const UserContext = createContext();
 
 export const UserProvider = (props) => {
   const [token, setToken] = useState(localStorage.getItem("Token"));
+  if(token==="null"){
+    setToken(null)
+  }
+  const URL="http://127.0.0.1:8000/api/users/me"
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -14,12 +18,12 @@ export const UserProvider = (props) => {
           Authorization: "Bearer " + token,
         },
       };
-
-      const response = await fetch("/api/users/me", requestOptions);
-
+      const response = await fetch(URL, requestOptions);
       if (!response.ok) {
         setToken(null);
       }
+      console.log(token)
+      console.log(typeof(token))
       localStorage.setItem("Token", token);
     };
     fetchUser();

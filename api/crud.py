@@ -1,12 +1,18 @@
 from sqlalchemy.orm import Session
 import jwt
-from . import models,schemas
+from . import models,schemas,database
 from fastapi import FastAPI,Depends,HTTPException,security
 from passlib import hash
 
 oauth2schema = security.OAuth2PasswordBearer(tokenUrl="/api/token")
 JWT_SECRET="c281d9885563337df6bc059260cee55de2861050ad73c0b13d422023f79ea560"
 
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def get_user(db:Session,user_id:int):
     return db.query(models.User).filter(models.User.id==user_id).first()
@@ -24,8 +30,9 @@ def create_user(db:Session,user:schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
-def get_items(db:Session,skip:int=0,limit:int=100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
+def get_items(user:schemas.User,db:Session):
+    items= db.query(models.Item).filter_by(owner_id=user.id)
+    return list(map(schemas.Item.from_orm,items))
 
 def create_user_item(db:Session,item:schemas.ItemCreate,user_id:int):
     db_item=models.Item(**item.dict(),owner_id=user_id)
@@ -53,15 +60,14 @@ def create_token(user:models.User):
     token=jwt.encode(user_obj.dict(),JWT_SECRET)
     return dict(access_token=token,token_type="bearer")
 
-def get_current_user(db:Session,token:str):
+def get_current_user(db:Session=Depends(get_db),token:str=Depends(oauth2schema)):
     try:
-        payload=jwt.decode(token,JWT_SECRET,algorithm=["HS256"])
+        payload=jwt.decode(token,JWT_SECRET,algorithms=["HS256"])
         user=db.query(models.User).get(payload["id"])
     except:
         raise HTTPException(
             status_code=401,detail="Invalid Email or Password"
         )
-
     return schemas.User.from_orm(user)
 
 #----------------------------------------------------------------
