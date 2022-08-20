@@ -30,6 +30,16 @@ def create_user(db:Session,user:schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+
+def get_item(item_id:int,user:schemas.User,db:Session):
+    item=(db.query(models.Item)
+    .filter_by(owner_id=user.id)
+    .filter(models.Item.id==item_id)
+    .first()
+    )
+    return schemas.Item.from_orm(item)
+
+
 def get_items(user:schemas.User,db:Session):
     items= db.query(models.Item).filter_by(owner_id=user.id)
     return list(map(schemas.Item.from_orm,items))
@@ -41,6 +51,41 @@ def create_user_item(db:Session,item:schemas.ItemCreate,user_id:int):
     db.refresh(db_item)
     return db_item
 
+def get_items_free(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Item).offset(skip).limit(limit).all()
+
+def create_Item(user:schemas.User,db:Session,item:schemas.ItemCreate):
+    item=models.Item(**item.dict(),owner_id=user.id)
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return schemas.Item.from_orm(item)
+
+def delete_item(item_id:int,user:schemas.User,db:Session):
+    item=(db.query(models.Item)
+    .filter_by(owner_id=user.id)
+    .filter(models.Item.id==item_id)
+    .first()
+    )
+    if item is None:
+        raise HTTPException(status_code=404,detail="Item does not exist")
+
+    db.delete(item)
+    db.commit()
+
+def update_item(item_id:int,item:schemas.ItemCreate,user:schemas.User,db:Session):
+    item_db=(db.query(models.Item)
+    .filter_by(owner_id=user.id)
+    .filter(models.Item.id==item_id)
+    .first()
+    )
+    item_db.title=item.title
+    item_db.description=item.description
+
+    db.commit()
+    db.refresh(item_db)
+
+    return schemas.Item.from_orm(item_db)
 
 # -----------JWT認証------------------
 # https://github.com/sixfwa/react-fastapi/blob/main/backend/services.py

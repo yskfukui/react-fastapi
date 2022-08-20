@@ -1,22 +1,19 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import Example from '../utils/walkman'
-import { Paperplane} from '../utils/paperplane'
-import { Register } from '../utils/Register'
-import { UserContext, UserProvider } from '../utils/UserContext'
+import Example from '../components/walkman'
+import { Paperplane } from '../components/paperplane'
+import { Register } from '../components/Register'
+import { Header } from '../components/Header'
+// import {UserProvider } from '../components/UserContext'
 export const Page1 = () => {
-    return (
-        <div className="App-header">
-            <h1>ここはpage1</h1>
-            <ul>
-                <li><Link to="/">ホーム</Link></li>
-                <li><Link to="/page1">ページ1</Link></li>
-                <li><Link to="/page2">ページ2</Link></li>
-            </ul>
-            <UserProvider></UserProvider>
-            <Register></Register>
-            <Example></Example>
-            <Paperplane></Paperplane>
-        </div>
-    )
+  return (
+    <div>
+      <Header title="title"></Header>
+      <div className='App-header'>
+        <br/>
+        <Register></Register>
+        <Example></Example>
+        <Paperplane></Paperplane>
+      </div>
+    </div>
+  )
 }

@@ -1,47 +1,33 @@
 import React from 'react'
-import axios from "axios";
-import { Header } from './Header';
-import { Footer } from './Footer';
-import { ProfileList } from './utils/ProfileList';
-import { useContext } from 'react';
-import { UserContext } from './utils/UserContext';
-import { Register } from './utils/Register';
-import {Login} from './utils/Login'
-import {Table} from './utils/Table'
+import { Header } from './components/Header'
+import { Footer } from './components/Footer'
+// import { ProfileList } from './components/ProfileList';
+import { useContext } from 'react'
+import { UserContext } from './components/UserContext'
+import { Register } from './components/Register'
+import { Login } from './components/Login'
+import { Table } from './components/Table'
 export const Home = () => {
-    const [data, setData] = React.useState();
-    const [token,]=useContext(UserContext)
-    const url = "http://127.0.0.1:8000/users/";
+  const [token] = useContext(UserContext)
 
-    const GetData = () => {
-        axios.get(url).then((res) => {
-            setData(res.data);
-        })
-            .catch((error) => {
-                console.log(error);
-            })
-
-    };
-
-    return (
-        <div>
-            <Header title="title"></Header>
-            <div className='columns'>
-                <div className='column m-6'>
-                    {
-                        !token ?(
-                            <div className='columns'>
-                                <Register/><Login/>
-                            </div>
-                        ):
-                        <p><Table /></p>
-                    }
-                </div>
+  return (
+    <div>
+      <Header title="title"></Header>
+      <div className="columns">
+        <div className="column m-6">
+          {!token ? (
+            <div className="columns is-variable is-centered is-8">
+              <Register />
+              <Login />
             </div>
-            {!data && <button onClick={GetData}>データを取得</button>}
-            {data && <ProfileList data={data}></ProfileList>}
-            {/* {data && <div>{data[0].email}</div>} */}
-            <Footer></Footer>
+          ) : (
+            <div className="columns is-centered is-size-5">
+              <Table />
+            </div>
+          )}
         </div>
-    )
+      </div>
+      <Footer></Footer>
+    </div>
+  )
 }
