@@ -19,8 +19,6 @@ export const SignUp = () => {
       .catch((error) => {
         alert('すでにemailアドレスは登録されています')
       })
-    console.log(email.value, username.value, password.value)
-    console.log('登録')
   }
 
   return (

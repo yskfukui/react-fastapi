@@ -8,8 +8,8 @@ export const Page1 = () => {
   return (
     <div>
       <Header title="title"></Header>
-      <div className='App-header'>
-        <br/>
+      <div className="App-header">
+        <br />
         <Register></Register>
         <Example></Example>
         <Paperplane></Paperplane>

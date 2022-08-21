@@ -1,11 +1,13 @@
 from msilib import schema
-from fastapi import FastAPI,Depends,HTTPException,security
+from fastapi import FastAPI,Depends,HTTPException,security,File,UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from . import crud,models,schemas
 from .crud import get_db
 from .database import SessionLocal,engine
 from typing import List
+import shutil
 
 app=FastAPI()
 origins=[
@@ -66,7 +68,11 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 def get_user(user:schemas.User=Depends(crud.get_current_user)):
     return user
 
-
+#　パスから画像を取得
+@app.get("/images/{file_name}")
+def get_image(file_name:str):
+    path = f'api/files/{file_name}'
+    return FileResponse(path)
 #--------------------POST----------------
 
 # 新たにユーザーを登録
@@ -107,6 +113,17 @@ def generate_token(
 
     return crud.create_token(user)
 
+@app.post("/images/")
+def get_uploadfile(upload_file: UploadFile):
+    path = f'api/files/{upload_file.filename}'
+    print(upload_file.file)
+    with open(path, 'wb+') as buffer:
+        print(upload_file.file)
+        shutil.copyfileobj(upload_file.file, buffer)
+    return {
+        'filename': path,
+        'type': upload_file.content_type
+    }
 # --------------DELETE---------
 # ユーザーに紐づいたItemのうち、item_idを指定して削除
 

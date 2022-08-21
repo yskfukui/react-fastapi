@@ -29,7 +29,6 @@ export const Register = () => {
     const url = 'http://127.0.0.1:8000/users'
     const response = await fetch(url, requestOptions)
     const data = await response.json()
-    console.log(data.detail)
     if (!response.ok) {
       setErrorMessage(data.detail)
     } else {
